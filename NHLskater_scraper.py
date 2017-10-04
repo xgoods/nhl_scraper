@@ -69,7 +69,7 @@ pick_stats = {"G": 5, "A": 3, "+/-": 1, "PIM": .25, "PPG": 2, "PPA": 1, "SHG": 1
 pick_players = []
 fan_points = [0]
 player_count = 0
-
+fan_pointsAVG = []
 
 for stat in rank_data:
     if (stat.text == "Rk"):
@@ -93,17 +93,9 @@ for stat in team_data:
     teams.append(stat.text)
     stat_dict['(E)Tm'] = teams
 
-
-if "GP" in pick_stats:
-    i = 0
-    for stat in games_data:
+for stat in games_data:
         games.append(stat.text)
         stat_dict['(F)GP'] = games
-        fan_points.insert(i, fan_points[i] + (int(stat.text) * pick_stats["GP"]))
-        if (len(fan_points) == (player_count + 1)):
-            del fan_points[i + 1]
-        i += 1
-
 
 if "G" in pick_stats:
     i = 0
@@ -329,6 +321,12 @@ if "FOP" in pick_stats:
 stat_dict['(B1)FANPTS']=fan_points
 del fan_points[player_count:]
 
+for avg in stat_dict['(F)GP']:
+    i = 0
+    fan_pointsAVG.append(round(fan_points[i]/int(avg), 1))
+
+    stat_dict['(B2)FANPTS(avg)'] = fan_pointsAVG
+    i += 1
 
 keys = sorted(stat_dict.keys())
 with open('fantasy_stats.csv', "wb") as csvfile:
